@@ -4,6 +4,7 @@ services:
     image: mysql:5.7
     container_name: mysql
     environment:
+      # Creamos la tabla
       - MYSQL_DATABASE=riesgos
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_USER=root
