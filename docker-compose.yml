@@ -1,0 +1,46 @@
+version: "3"
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql
+    environment:
+      # Creamos la tabla
+      - MYSQL_DATABASE=riesgos
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=root
+    volumes:
+      # Montamos un volumen para MySQL para no perder los datos de bd
+      - ./volumen/mysql:/var/lib/mysql
+    expose:
+      - 3306
+    ports:
+      - 3306:3306
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: dev_pma
+    links:
+        - mysql
+    environment:
+        PMA_HOST: mysql
+        PMA_PORT: 3306
+        PMA_ARBITRARY: 1
+    volumes:
+      #Genera el php.ini para establecer configuraciones
+      - ./php.ini:/usr/local/etc/php/php.ini
+    restart: always
+    ports:
+        - 8183:80
+  php:
+    build: .
+    container_name: php_apache
+    volumes:
+      # Montamos nuestra web desde fuera en el directorio web del contenedor
+      - ./www/:/var/www/html
+    expose:
+      - 80
+    ports:
+      - 80:80
+    links: 
+      - mysql
+      - phpmyadmin
